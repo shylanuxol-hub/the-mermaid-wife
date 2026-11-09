@@ -201,13 +201,3 @@ ul.sources li { margin-bottom: .5em; }
   mix-blend-mode: multiply;
   animation: fade 2s ease both;
 }
-
-/* images dissolve into the page instead of sitting in hard rectangles */
-.choice img, .pop, .decor {
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
-                      linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
-  -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
-                      linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
-          mask-composite: intersect;
-}
