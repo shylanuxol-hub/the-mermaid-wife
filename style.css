@@ -1,0 +1,213 @@
+:root {
+  --paper: #f6f4fa;
+  --ink: #2e2a38;
+  --dim: #9a93ab;
+  --faint: rgba(46, 42, 56, 0.09);
+  --sea: #6f8794;
+  --serif: "IM Fell English", Georgia, serif;
+  --mono: "Cormorant Garamond", Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.6;
+  transition: background-color 2s ease;
+}
+body.kept     { --paper: #ebeaee; }
+body.released { --paper: #eef2f6; }
+
+#stage {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* the narration at the top of each page */
+.head {
+  position: relative;
+  z-index: 2;
+  max-width: 34em;
+  padding: 9vh 0 0 8vw;
+  animation: fade 1.4s ease both;
+}
+.head p, .head h1, .head ul { margin: 0 0 0.9em; background: var(--paper); transition: background-color 2s ease; }
+.head h1 { margin-bottom: .3em; }
+.head h1 {
+  font-weight: normal;
+  font-size: 3rem;
+  letter-spacing: 0.03em;
+  margin: 0 0 0.3em;
+}
+.head .sub { color: var(--dim); font-style: italic; }
+.speech { font-style: italic; }
+
+/* scattered choices */
+.choice {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  animation: fade 1.4s ease both;
+  animation-delay: 1.6s; /* read first, then the way forward appears */
+}
+.choice img {
+  width: 100%;
+  display: block;
+  filter: grayscale(1) contrast(1.1) brightness(1.05);
+  mix-blend-mode: multiply; /* images sink into the lavender paper */
+  transition: filter .6s, opacity .4s;
+}
+.choice:hover img { filter: grayscale(1) invert(1) contrast(1.1); }
+.choice .label {
+  display: block;
+  margin-top: .45em;
+  font-style: italic;
+  font-size: .95rem;
+  color: var(--dim);
+  transition: color .4s;
+}
+.choice:hover .label { color: var(--ink); }
+
+/* text-only choices (and images that are missing) read as fragments */
+.choice.text .label, .choice.missing .label {
+  position: relative;
+  font-size: 1.35rem;
+  color: var(--ink);
+  margin: 0;
+  transition: letter-spacing .6s;
+}
+/* a small drifting wave appears under text choices on hover */
+.choice.text .lb::after, .choice.missing .lb::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -9px;
+  height: 7px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 7'%3E%3Cpath d='M0 3.5 Q 6 0.5 12 3.5 T 24 3.5' fill='none' stroke='%236f8794' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x 0 0 / 24px 7px;
+  opacity: 0;
+  transition: opacity .6s;
+  animation: drift 2.8s linear infinite;
+}
+.choice.text.on .lb::after, .choice.missing.on .lb::after { opacity: 1; }
+@keyframes drift { from { background-position-x: 0; } to { background-position-x: 24px; } }
+
+.choice.missing img { display: none; }
+.choice.small .label { font-size: .85rem; font-family: var(--mono); color: var(--dim); font-style: normal; }
+
+/* both labels sit in the same spot, so the choice never changes size on hover (no flicker) */
+.choice .label { display: grid; }
+.choice.text .label, .choice.missing .label { display: inline-grid; }
+.choice .la, .choice .lb { grid-area: 1 / 1; justify-self: start; position: relative; transition: opacity .5s ease; }
+.choice .lb { opacity: 0; }
+.choice.on .la { opacity: 0; }
+.choice.on .lb { opacity: 1; }
+
+/* words with something under them */
+.w { border-bottom: 1px dotted var(--dim); cursor: help; }
+.her { transition: color .5s; cursor: default; }
+.her:hover { color: var(--sea); }
+
+/* her unspoken voice drifts onto the page */
+#whisper {
+  position: absolute;
+  z-index: 1;
+  max-width: 16em;
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--sea);
+  opacity: 0;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+#whisper.on { opacity: .85; }
+
+/* folklore / dialect notes: small, no box */
+#note {
+  position: fixed;
+  left: 8vw; bottom: 4vh;
+  max-width: 44em;
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--dim);
+  opacity: 0;
+  transition: opacity .4s;
+  pointer-events: none;
+  z-index: 5;
+}
+#note.on { opacity: 1; }
+
+.ending-title {
+  font-family: var(--mono);
+  letter-spacing: .3em;
+  font-size: .8rem;
+  color: var(--dim);
+  margin-top: 2.2em !important;
+}
+.small { font-family: var(--mono); font-size: .75rem; color: var(--dim); }
+ul.sources { font-size: .85rem; padding-left: 1.1em; }
+ul.sources li { margin-bottom: .5em; }
+
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* phones: choices fall into a column under the text */
+@media (max-width: 760px) {
+  html, body { font-size: 17px; }
+  .head { padding: 7vh 7vw 0; }
+  .choice { position: static; width: auto !important; margin: 2.2em 7vw 0; max-width: 300px; }
+  #stage { padding-bottom: 14vh; }
+  #whisper { position: static; display: block; margin: 1.5em 7vw 0; }
+}
+
+/* small labels and notes: letterspaced small caps / italic Cormorant */
+.small, .ending-title, .choice.small .label { font-variant: small-caps; letter-spacing: .14em; font-size: .95rem; }
+.ending-title { letter-spacing: .3em; }
+#note { font-style: italic; font-size: .95rem; }
+
+/* tall images never run off the bottom */
+.choice img { max-height: 80vh; object-fit: contain; }
+
+/* a hover image that rises somewhere else on the page */
+.pop {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease, transform 1s ease;
+  pointer-events: none;
+  filter: grayscale(1) contrast(1.1) brightness(1.05);
+  mix-blend-mode: multiply;
+}
+.pop.on { opacity: 1; transform: none; }
+@media (max-width: 760px) {
+  .pop { position: fixed; left: 7vw !important; top: auto !important; bottom: 8vh; width: 86vw !important; }
+}
+
+.decor {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .35;
+  filter: grayscale(1) contrast(1.1);
+  mix-blend-mode: multiply;
+  animation: fade 2s ease both;
+}
+
+/* images dissolve into the page instead of sitting in hard rectangles */
+.choice img, .pop, .decor {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
+                      linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
+                      linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+          mask-composite: intersect;
+}
